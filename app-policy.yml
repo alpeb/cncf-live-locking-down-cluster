@@ -1,0 +1,40 @@
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  namespace: emojivoto
+  name: grpc
+  labels:
+    app: emojivoto-srv
+spec:
+  podSelector:
+    matchLabels: {} # every pod
+  port: grpc
+  proxyProtocol: gRPC
+---
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  namespace: emojivoto
+  name: http
+  labels:
+    app: emojivoto-srv
+spec:
+  podSelector:
+    matchLabels: {} # every pod
+  port: http
+  proxyProtocol: HTTP/1
+---
+apiVersion: policy.linkerd.io/v1beta1
+kind: ServerAuthorization
+metadata:
+  namespace: emojivoto
+  name: ns-only
+spec:
+  server:
+    selector:
+      matchLabels:
+        app: emojivoto-srv
+  client:
+    meshTLS:
+      identities:
+      - "*.emojivoto.serviceaccount.identity.linkerd.cluster.local"
